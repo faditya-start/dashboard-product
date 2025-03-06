@@ -9,11 +9,23 @@ use Illuminate\Support\Facades\Validator;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the products.
      */
     public function index()
     {
-        //
+        try {
+            $products = Product::latest()->paginate(10);
+            
+            return response()->json([
+                'message' => 'Products retrieved successfully',
+                'data' => $products
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error retrieving products',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -69,11 +81,27 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified product.
      */
     public function show(string $id)
     {
-        //
+        try {
+            $product = Product::findOrFail($id);
+            
+            return response()->json([
+                'message' => 'Product retrieved successfully',
+                'data' => $product
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Product not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error retrieving product',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

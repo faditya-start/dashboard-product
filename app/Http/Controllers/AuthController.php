@@ -110,14 +110,14 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            // Cek apakah user sudah terautentikasi
+            // Cek user terautentikasi
             if (!$request->user()) {
                 return response()->json([
                     'message' => 'Unauthorized - No valid token found'
                 ], 401);
             }
 
-            // Hapus token yang sedang digunakan
+            // Hapus token 
             $request->user()->currentAccessToken()->delete();
 
             return response()->json([
