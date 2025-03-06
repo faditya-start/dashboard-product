@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -17,15 +18,11 @@ class ProductController extends Controller
         try {
             $products = Product::latest()->paginate(10);
             
-            return response()->json([
-                'message' => 'Products retrieved successfully',
-                'data' => $products
+            return Inertia::render('Products/Index', [
+                'products' => $products
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error retrieving products',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error retrieving products');
         }
     }
 
