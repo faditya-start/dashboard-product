@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -105,11 +106,60 @@ class ProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified product in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            // Find product
+            $product = Product::findOrFail($id);
+
+            // Validate input
+            $validator = Validator::make($request->all(), [
+                'name' => 'sometimes|string|max:255',
+                'description' => 'nullable|string',
+                'price' => 'sometimes|numeric|min:0',
+                'stock' => 'sometimes|integer|min:0',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'is_active' => 'sometimes|boolean'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Handle image upload if present
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($product->image) {
+                    Storage::disk('public')->delete($product->image);
+                }
+                // Store new image
+                $imagePath = $request->file('image')->store('products', 'public');
+                $product->image = $imagePath;
+            }
+
+            // Update other fields
+            $product->update($request->except('image'));
+
+            return response()->json([
+                'message' => 'Product updated successfully',
+                'data' => $product
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Product not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating product',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
