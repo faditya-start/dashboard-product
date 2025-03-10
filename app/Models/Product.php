@@ -11,15 +11,17 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'sku',
+        'category',
         'description',
         'price',
         'stock',
         'image',
-        'is_active'
+        'status'
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
-        'is_active' => 'boolean'
+        'stock' => 'integer'
     ];
 }

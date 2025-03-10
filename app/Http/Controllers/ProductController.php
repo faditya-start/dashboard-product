@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $products = Product::latest()->paginate(10);
+            $products = Product::latest()->get();
             
             return Inertia::render('Products/Index', [
                 'products' => $products
@@ -24,6 +24,14 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Error retrieving products');
         }
+    }
+
+    /**
+     * Show the form for creating a new product.
+     */
+    public function create()
+    {
+        return Inertia::render('Products/Create');
     }
 
     /**
@@ -35,18 +43,17 @@ class ProductController extends Controller
             // Validasi input
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
+                'sku' => 'required|string|unique:products,sku',
+                'category' => 'required|string',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
                 'stock' => 'required|integer|min:0',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'is_active' => 'boolean'
+                'status' => 'required|in:In Stock,Out of Stock'
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
+                return back()->withErrors($validator)->withInput();
             }
 
             // Handle image upload if present
@@ -58,47 +65,36 @@ class ProductController extends Controller
             // Create product
             $product = Product::create([
                 'name' => $request->name,
+                'sku' => $request->sku,
+                'category' => $request->category,
                 'description' => $request->description,
                 'price' => $request->price,
                 'stock' => $request->stock,
                 'image' => $imagePath,
-                'is_active' => $request->is_active ?? true
+                'status' => $request->status
             ]);
 
-            return response()->json([
-                'message' => 'Product created successfully',
-                'data' => $product
-            ], 201);
+            return redirect()->route('products.index')
+                ->with('success', 'Product created successfully');
 
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error creating product',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error creating product: ' . $e->getMessage());
         }
     }
 
     /**
-     * Display the specified product.
+     * Show the form for editing the specified product.
      */
-    public function show(string $id)
+    public function edit(string $id)
     {
         try {
             $product = Product::findOrFail($id);
             
-            return response()->json([
-                'message' => 'Product retrieved successfully',
-                'data' => $product
+            return Inertia::render('Products/Edit', [
+                'product' => $product
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Product not found'
-            ], 404);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error retrieving product',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error retrieving product');
         }
     }
 
@@ -108,24 +104,22 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            // Find product
             $product = Product::findOrFail($id);
 
             // Validate input
             $validator = Validator::make($request->all(), [
-                'name' => 'sometimes|string|max:255',
+                'name' => 'required|string|max:255',
+                'sku' => 'required|string|unique:products,sku,' . $id,
+                'category' => 'required|string',
                 'description' => 'nullable|string',
-                'price' => 'sometimes|numeric|min:0',
-                'stock' => 'sometimes|integer|min:0',
+                'price' => 'required|numeric|min:0',
+                'stock' => 'required|integer|min:0',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'is_active' => 'sometimes|boolean'
+                'status' => 'required|in:In Stock,Out of Stock'
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
+                return back()->withErrors($validator)->withInput();
             }
 
             // Handle image upload if present
@@ -142,20 +136,11 @@ class ProductController extends Controller
             // Update other fields
             $product->update($request->except('image'));
 
-            return response()->json([
-                'message' => 'Product updated successfully',
-                'data' => $product
-            ]);
+            return redirect()->route('products.index')
+                ->with('success', 'Product updated successfully');
 
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Product not found'
-            ], 404);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error updating product',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error updating product: ' . $e->getMessage());
         }
     }
 
@@ -165,7 +150,6 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         try {
-            // Find product
             $product = Product::findOrFail($id);
 
             // Delete product image if exists
@@ -176,19 +160,10 @@ class ProductController extends Controller
             // Delete product
             $product->delete();
 
-            return response()->json([
-                'message' => 'Product deleted successfully'
-            ]);
+            return back()->with('success', 'Product deleted successfully');
 
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Product not found'
-            ], 404);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error deleting product',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error deleting product: ' . $e->getMessage());
         }
     }
 }

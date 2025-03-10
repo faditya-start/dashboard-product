@@ -1,0 +1,13 @@
+[33m2cee210[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: set login as landing page - Change root route to render login page, move Welcome page to protected routes, update login page UI and redirect
+[33m37f277a[m feat:in as landing page
+[33m101af87[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m refactor: implement dependency injection with ProductService
+[33m6821c91[m feat: integrate Inertia.js with React for frontend
+[33ma33c020[m feat: add product delete functionality
+[33me2e2122[m feat: add product update functionality
+[33ma9e164a[m feat: add product read endpoints (index & show)
+[33m6d0bfe6[m feat: add product creation with image upload support
+[33m0c11251[m feat(auth): implement Laravel Sanctum authentication
+[33m9f91396[m Create Authentication for controller and routes
+[33ma910e37[m Enable sanctum API tokens in user model
+[33m678d3e8[m Add sanctrum middleware
+[33me178750[m Initial commit: Setup Laravel project

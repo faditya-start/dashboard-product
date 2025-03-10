@@ -107,7 +107,7 @@ export default function Login() {
                                     id="remember"
                                     name="remember"
                                     type="checkbox"
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                    className="h-4 w-4 text-indigo-500 focus:ring-indigo-500 border-gray-300 rounded"
                                     checked={data.remember}
                                     onChange={e => setData('remember', e.target.checked)}
                                 />
@@ -121,7 +121,7 @@ export default function Login() {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all duration-150 ease-in-out"
+                                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all duration-150 ease-in-out"
                             >
                                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                     {processing ? (

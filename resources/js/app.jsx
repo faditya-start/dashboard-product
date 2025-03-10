@@ -14,8 +14,9 @@ createInertiaApp({
     },
     progress: {
         color: '#4B5563',
+        showSpinner: true,
+        delay: 250,
     },
 }).then(() => {
-    // Initialization complete
-    console.log('Inertia app initialized');
+    console.log('App initialized');
 }); 
