@@ -4,6 +4,7 @@ import '../css/app.css';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import LoadingIndicator from './Components/LoadingIndicator';
 
 createInertiaApp({
     title: (title) => `${title} - Dashboard Product`,
@@ -13,9 +14,11 @@ createInertiaApp({
         root.render(<App {...props} />);
     },
     progress: {
-        color: '#4B5563',
-        showSpinner: true,
         delay: 250,
+        color: '#6366f1',
+        includeCSS: false,
+        showSpinner: true,
+        render: () => <LoadingIndicator />
     },
 }).then(() => {
     console.log('App initialized');

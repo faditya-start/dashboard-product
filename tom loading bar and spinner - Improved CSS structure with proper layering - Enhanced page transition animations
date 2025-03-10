@@ -1,0 +1,24 @@
+[33mcommit c8c9f2da398dedd19033a6fb5f1c9d64b31d5106[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Faditya <daffaaditya2607@gmail.com>
+Date:   Tue Mar 11 02:29:38 2025 +0700
+
+    feat(ui): improve sidebar and product management - Enhanced sidebar transitions and animations - Improved product form with better spacing and validation - Added product CRUD functionality with image upload - Optimized mobile responsiveness
+
+ app/Http/Controllers/ProductController.php         |  97 [32m++[m[31m----[m
+ app/Http/Middleware/HandleInertiaRequests.php      |  42 [32m+++[m
+ app/Models/Product.php                             |   6 [32m+[m[31m-[m
+ composer.json                                      |   4 [32m+[m[31m-[m
+ composer.lock                                      | 146 [32m+++++++[m[31m-[m
+ database/create-admin.sql                          |   8 [32m+[m
+ ...4_03_21_000000_add_fields_to_products_table.php |  32 [32m++[m
+ database/seeders/DatabaseSeeder.php                |  12 [32m+[m[31m-[m
+ database/seeders/UserSeeder.php                    |  17 [32m+[m
+ resources/js/Layouts/AdminLayout.jsx               | 374 [32m+++++++++++++[m[31m--------[m
+ resources/js/Pages/Auth/Login.jsx                  |   4 [32m+[m[31m-[m
+ resources/js/Pages/Products/Create.jsx             | 359 [32m++++++++++++++++++++[m
+ resources/js/Pages/Products/Index.jsx              | 182 [32m+++++++[m[31m---[m
+ resources/js/Pages/Welcome.jsx                     |   2 [32m+[m[31m-[m
+ resources/js/app.jsx                               |   5 [32m+[m[31m-[m
+ routes/web.php                                     |  16 [32m+[m[31m-[m
+ tatus                                              |  13 [32m+[m
+ 17 files changed, 1069 insertions(+), 250 deletions(-)
