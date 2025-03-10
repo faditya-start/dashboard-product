@@ -3,100 +3,180 @@ import { Link } from '@inertiajs/react';
 
 export default function AdminLayout({ children, title }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+    const navigation = [
+        { name: 'Dashboard', href: '/dashboard', icon: (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+        )},
+        { name: 'Products', href: '/products', icon: (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+        )},
+        { name: 'Orders', href: '/orders', icon: (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+        )},
+        { name: 'Reports', href: '/reports', icon: (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+        )},
+    ];
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Sidebar */}
-            <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 overflow-y-auto transition duration-300 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
-                <div className="flex items-center justify-center mt-8">
-                    <div className="flex items-center">
-                        <span className="text-white text-2xl mx-2 font-semibold">Dashboard</span>
+        <div className="min-h-screen bg-gray-100">
+            {/* Sidebar for mobile */}
+            <div className={`fixed inset-0 z-40 lg:hidden ${sidebarOpen ? '' : 'hidden'}`} role="dialog" aria-modal="true">
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ease-in-out duration-300" aria-hidden="true" onClick={() => setSidebarOpen(false)}></div>
+                
+ i                <div className="relative flex flex-col max-w-xs w-[280px] h-full bg-indigo-900 transition ease-in-out duration-300">
+                    <div className="absolute top-0 right-0 -mr-12 pt-4">
+                        <button
+                            type="button"
+                            className="flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                            onClick={() => setSidebarOpen(false)}
+                        >
+                            <span className="sr-only">Close sidebar</span>
+                            <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+                        <div className="flex items-center justify-between px-4">
+                            <div className="flex-shrink-0">
+                                <span className="text-xl font-bold text-white">Dashboard</span>
+                            </div>
+                        </div>
+                        <nav className="mt-5 px-2 space-y-1">
+                            {navigation.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className="group flex items-center px-3 py-2 text-base font-medium rounded-md text-white hover:bg-indigo-800 transition-colors duration-150"
+                                >
+                                    {item.icon}
+                                    <span className="ml-3">{item.name}</span>
+                                </Link>
+                            ))}
+                        </nav>
                     </div>
                 </div>
-
-                <nav className="mt-10">
-                    <Link
-                        className="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
-                        href="/dashboard"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
-                        </svg>
-                        <span className="mx-3">Dashboard</span>
-                    </Link>
-
-                    <Link
-                        className="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
-                        href="/products"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                        </svg>
-                        <span className="mx-3">Products</span>
-                    </Link>
-
-                    <Link
-                        className="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
-                        href="/users"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                        <span className="mx-3">Users</span>
-                    </Link>
-
-                    <Link
-                        className="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
-                        href="/settings"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <span className="mx-3">Settings</span>
-                    </Link>
-                </nav>
             </div>
 
-            {/* Content area */}
-            <div className="flex-1 flex flex-col lg:pl-64">
-                {/* Top navbar */}
-                <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
+            {/* Static sidebar for desktop */}
+            <div className={`hidden lg:flex ${sidebarCollapsed ? 'lg:w-20' : 'lg:w-64'} lg:flex-col lg:fixed lg:inset-y-0 transition-all duration-300`}>
+                <div className="flex-1 flex flex-col min-h-0 bg-indigo-700">
+                    <div className="flex items-center justify-between h-16 px-4 bg-indigo-900">
+                        <div className={`flex-shrink-0 ${sidebarCollapsed ? 'hidden' : 'block'}`}>
+                            <span className="text-xl font-bold text-white">Dashboard</span>
+                        </div>
+                        <button
+                            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                            className="p-1 rounded-lg text-indigo-200 hover:bg-indigo-800 focus:outline-none"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={sidebarCollapsed ? "M13 5l7 7-7 7M5 5l7 7-7 7" : "M11 19l-7-7 7-7m8 14l-7-7 7-7"} />
+                            </svg>
+                        </button>
+                    </div>
+                    <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+                        <nav className="mt-5 flex-1 px-2 space-y-1">
+                            {navigation.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={`group flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'px-3'} py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-800`}
+                                >
+                                    <div className="flex-shrink-0">
+                                        {item.icon}
+                                    </div>
+                                    {!sidebarCollapsed && <span className="ml-3">{item.name}</span>}
+                                </Link>
+                            ))}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main content */}
+            <div className={`flex flex-col flex-1 ${sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'} transition-all duration-300`}>
+                {/* Top navigation */}
+                <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
                     <button
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        type="button"
                         className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 lg:hidden"
+                        onClick={() => setSidebarOpen(true)}
                     >
+                        <span className="sr-only">Open sidebar</span>
                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
+                    
                     <div className="flex-1 px-4 flex justify-between">
-                        <div className="flex-1 flex">
-                            <h1 className="text-2xl font-semibold text-gray-900 my-auto">{title}</h1>
+                        <div className="flex-1 flex items-center">
+                            <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 truncate">{title}</h1>
                         </div>
                         <div className="ml-4 flex items-center md:ml-6">
                             {/* Profile dropdown */}
                             <div className="ml-3 relative">
-                                <div>
-                                    <button className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                        <span className="sr-only">Open user menu</span>
-                                        <img
-                                            className="h-8 w-8 rounded-full"
-                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                            alt=""
-                                        />
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                                    className="max-w-xs bg-gray-100 flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-1"
+                                >
+                                    <span className="sr-only">Open user menu</span>
+                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500">
+                                        <span className="text-sm font-medium leading-none text-white">U</span>
+                                    </span>
+                                </button>
+
+                                {/* Dropdown menu */}
+                                {profileDropdownOpen && (
+                                    <div 
+                                        className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                                        onClick={() => setProfileDropdownOpen(false)}
+                                    >
+                                        <div className="py-1">
+                                            <Link
+                                                href="/profile"
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            >
+                                                Your Profile
+                                            </Link>
+                                            <Link
+                                                href="/settings"
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            >
+                                                Settings
+                                            </Link>
+                                            <Link
+                                                href="/logout"
+                                                method="post"
+                                                as="button"
+                                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            >
+                                                Sign out
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Main content */}
-                <main className="flex-1 overflow-y-auto focus:outline-none">
-                    <div className="py-6">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                <main className="flex-1 overflow-x-hidden">
+                    <div className="py-4 sm:py-6">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             {children}
                         </div>
                     </div>
