@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
@@ -6,6 +6,10 @@ export default function Create() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         sku: '',
+        sku_prefix: '',
+        sku_suffix: '',
+        custom_sku: '',
+        use_custom_sku: false,
         category: '',
         price: '',
         stock: '',
@@ -16,6 +20,35 @@ export default function Create() {
 
     const [imagePreview, setImagePreview] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
+
+    // Generate SKU automatically when name or category changes
+    useEffect(() => {
+        if (!data.use_custom_sku && data.name && data.category) {
+            const categoryCode = data.category.substring(0, 3).toUpperCase();
+            const nameCode = data.name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 3).toUpperCase();
+            const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            const newSku = `${categoryCode}-${nameCode}-${randomNum}`;
+            setData('sku', newSku);
+        } else if (data.use_custom_sku) {
+            const prefix = data.sku_prefix || '';
+            const custom = data.custom_sku || '';
+            const suffix = data.sku_suffix || '';
+            const parts = [prefix, custom, suffix].filter(Boolean);
+            const newSku = parts.join('-');
+            setData('sku', newSku);
+        }
+    }, [data.name, data.category, data.use_custom_sku, data.sku_prefix, data.custom_sku, data.sku_suffix]);
+
+    // Handle name change with auto-capitalization
+    const handleNameChange = (e) => {
+        const value = e.target.value;
+        setData('name', value.charAt(0).toUpperCase() + value.slice(1));
+    };
+
+    // Handle category change
+    const handleCategoryChange = (e) => {
+        setData('category', e.target.value);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -101,7 +134,7 @@ export default function Create() {
                                                 type="text"
                                                 id="name"
                                                 value={data.name}
-                                                onChange={e => setData('name', e.target.value)}
+                                                onChange={handleNameChange}
                                                 className={`block w-full rounded-md shadow-sm text-base py-3 px-4 ${
                                                     errors.name 
                                                         ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
@@ -115,34 +148,13 @@ export default function Create() {
                                         </div>
 
                                         <div>
-                                            <label htmlFor="sku" className="block text-base font-medium text-gray-700 mb-2">
-                                                SKU <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="sku"
-                                                value={data.sku}
-                                                onChange={e => setData('sku', e.target.value)}
-                                                className={`block w-full rounded-md shadow-sm text-base py-3 px-4 ${
-                                                    errors.sku 
-                                                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                                                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
-                                                }`}
-                                                required
-                                            />
-                                            {errors.sku && (
-                                                <p className="mt-2 text-sm text-red-600">{errors.sku}</p>
-                                            )}
-                                        </div>
-
-                                        <div>
                                             <label htmlFor="category" className="block text-base font-medium text-gray-700 mb-2">
                                                 Category <span className="text-red-500">*</span>
                                             </label>
                                             <select
                                                 id="category"
                                                 value={data.category}
-                                                onChange={e => setData('category', e.target.value)}
+                                                onChange={handleCategoryChange}
                                                 className={`block w-full rounded-md shadow-sm text-base py-3 px-4 ${
                                                     errors.category 
                                                         ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
@@ -161,6 +173,92 @@ export default function Create() {
                                             </select>
                                             {errors.category && (
                                                 <p className="mt-2 text-sm text-red-600">{errors.category}</p>
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="sku" className="block text-base font-medium text-gray-700 mb-2">
+                                                SKU (Stock Keeping Unit) <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="space-y-4">
+                                                <div className="relative">
+                                                    <input
+                                                        type="text"
+                                                        id="sku"
+                                                        value={data.sku}
+                                                        className="block w-full rounded-md shadow-sm text-base py-3 px-4 bg-gray-100 border-gray-300 cursor-not-allowed"
+                                                        disabled
+                                                    />
+                                                </div>
+                                                
+                                                <div className="flex items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="use_custom_sku"
+                                                        checked={data.use_custom_sku}
+                                                        onChange={e => setData('use_custom_sku', e.target.checked)}
+                                                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                                    />
+                                                    <label htmlFor="use_custom_sku" className="ml-2 block text-sm text-gray-700">
+                                                        Use custom SKU
+                                                    </label>
+                                                </div>
+
+                                                {data.use_custom_sku && (
+                                                    <div className="space-y-4">
+                                                        <div>
+                                                            <label htmlFor="sku_prefix" className="block text-sm font-medium text-gray-700">
+                                                                SKU Prefix
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                id="sku_prefix"
+                                                                value={data.sku_prefix}
+                                                                onChange={e => setData('sku_prefix', e.target.value.toUpperCase())}
+                                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                                placeholder="e.g., PRD"
+                                                            />
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <label htmlFor="custom_sku" className="block text-sm font-medium text-gray-700">
+                                                                Custom SKU
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                id="custom_sku"
+                                                                value={data.custom_sku}
+                                                                onChange={e => setData('custom_sku', e.target.value.toUpperCase())}
+                                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                                placeholder="e.g., CUSTOM123"
+                                                            />
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <label htmlFor="sku_suffix" className="block text-sm font-medium text-gray-700">
+                                                                SKU Suffix
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                id="sku_suffix"
+                                                                value={data.sku_suffix}
+                                                                onChange={e => setData('sku_suffix', e.target.value.toUpperCase())}
+                                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                                placeholder="e.g., 2024"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                
+                                                <p className="mt-2 text-sm text-gray-500">
+                                                    {data.use_custom_sku 
+                                                        ? "Enter your custom SKU details above. The final SKU will be formatted as PREFIX-CUSTOM-SUFFIX"
+                                                        : "SKU will be generated automatically based on category and product name"
+                                                    }
+                                                </p>
+                                            </div>
+                                            {errors.sku && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.sku}</p>
                                             )}
                                         </div>
 
