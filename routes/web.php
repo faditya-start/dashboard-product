@@ -31,4 +31,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Product routes
     Route::resource('products', ProductController::class);
+
+    Route::get('/reports', function () {
+        return Inertia::render('Reports/Index');
+    })->name('reports.index');
 });
