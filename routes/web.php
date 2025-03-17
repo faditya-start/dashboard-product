@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ReportController;
 use Inertia\Inertia;
 
 // Guest routes
@@ -32,7 +33,5 @@ Route::middleware(['auth'])->group(function () {
     // Product routes
     Route::resource('products', ProductController::class);
 
-    Route::get('/reports', function () {
-        return Inertia::render('Reports/Index');
-    })->name('reports.index');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 });

@@ -2,31 +2,7 @@ import React from 'react';
 import { Head } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-export default function Reports() {
-    // Sample data - in a real app, this would come from props
-    const statistics = {
-        totalProducts: 150,
-        totalSales: 1250,
-        revenue: 25000,
-        averageOrderValue: 120
-    };
-
-    const topProducts = [
-        { name: 'iPhone 13', sales: 50, revenue: 5000 },
-        { name: 'Samsung TV', sales: 30, revenue: 4500 },
-        { name: 'MacBook Pro', sales: 25, revenue: 6000 },
-        { name: 'AirPods Pro', sales: 45, revenue: 2250 },
-        { name: 'iPad Air', sales: 35, revenue: 3500 }
-    ];
-
-    const recentOrders = [
-        { id: '#ORD001', product: 'iPhone 13', customer: 'John Doe', date: '2024-03-10', status: 'Completed', amount: 999 },
-        { id: '#ORD002', product: 'MacBook Pro', customer: 'Jane Smith', date: '2024-03-09', status: 'Processing', amount: 1299 },
-        { id: '#ORD003', product: 'AirPods Pro', customer: 'Mike Johnson', date: '2024-03-09', status: 'Completed', amount: 249 },
-        { id: '#ORD004', product: 'iPad Air', customer: 'Sarah Wilson', date: '2024-03-08', status: 'Shipped', amount: 599 },
-        { id: '#ORD005', product: 'Samsung TV', customer: 'Tom Brown', date: '2024-03-08', status: 'Completed', amount: 899 }
-    ];
-
+export default function Reports({ statistics, topProducts, recentOrders }) {
     return (
         <AdminLayout title="Reports & Analytics">
             <Head title="Reports & Analytics" />
@@ -78,7 +54,7 @@ export default function Reports() {
                                 </div>
                                 <div className="ml-4">
                                     <h3 className="text-lg font-medium text-gray-900">Revenue</h3>
-                                    <p className="text-2xl font-semibold text-blue-600">${statistics.revenue}</p>
+                                    <p className="text-2xl font-semibold text-blue-600">${statistics.revenue.toLocaleString()}</p>
                                 </div>
                             </div>
                         </div>
@@ -92,7 +68,7 @@ export default function Reports() {
                                 </div>
                                 <div className="ml-4">
                                     <h3 className="text-lg font-medium text-gray-900">Avg. Order Value</h3>
-                                    <p className="text-2xl font-semibold text-purple-600">${statistics.averageOrderValue}</p>
+                                    <p className="text-2xl font-semibold text-purple-600">${statistics.averageOrderValue.toFixed(2)}</p>
                                 </div>
                             </div>
                         </div>
@@ -118,7 +94,7 @@ export default function Reports() {
                                                 <tr key={index}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.sales}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.revenue}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.revenue.toLocaleString()}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -154,7 +130,7 @@ export default function Reports() {
                                                             {order.status}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.amount}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.amount.toLocaleString()}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
