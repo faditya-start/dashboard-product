@@ -43,13 +43,21 @@ class ProductController extends Controller
             // Validasi input
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
-                'sku' => 'required|string|unique:products,sku',
+                'sku' => [
+                    'required',
+                    'string',
+                    'unique:products,sku',
+                    'regex:/^[A-Z]{3}-[A-Z0-9]{3}-[0-9]{3}$/',
+                ],
                 'category' => 'required|string',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
                 'stock' => 'required|integer|min:0',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'status' => 'required|in:In Stock,Out of Stock'
+            ], [
+                'sku.regex' => 'SKU format should be: CAT-PRD-123 (Category-Product-Number)',
+                'sku.unique' => 'This SKU is already in use. Please generate a new one.',
             ]);
 
             if ($validator->fails()) {

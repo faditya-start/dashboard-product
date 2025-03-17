@@ -30,8 +30,33 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('Welcome');
     })->name('home');
 
-    // Product routes
-    Route::resource('products', ProductController::class);
+    // Product routes with permissions
+    Route::middleware(['permission:view-products'])->group(function () {
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+        Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+    });
 
-    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::middleware(['permission:create-products'])->group(function () {
+        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    });
+
+    Route::middleware(['permission:edit-products'])->group(function () {
+        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+    });
+
+    Route::middleware(['permission:delete-products'])->group(function () {
+        Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    });
+
+    // Reports route with permission
+    Route::middleware(['permission:view-reports'])->group(function () {
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    });
+
+    // Admin only routes
+    Route::middleware(['role:admin'])->group(function () {
+        // Add admin-specific routes here
+    });
 });
