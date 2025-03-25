@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
 use Inertia\Inertia;
 
 // Guest routes
@@ -56,26 +57,34 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     });
 
-    // User management routes
-    Route::middleware(['permission:view-users'])->group(function () {
+    // User Management Routes
+    Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
-    });
-
-    Route::middleware(['permission:create-users'])->group(function () {
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
-    });
-
-    Route::middleware(['permission:edit-users'])->group(function () {
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        
+        // User Role Management Routes
         Route::post('/users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assign-role');
         Route::delete('/users/{user}/remove-role', [UserController::class, 'removeRole'])->name('users.remove-role');
     });
 
-    Route::middleware(['permission:delete-users'])->group(function () {
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    // Role Management Routes
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
+        Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
+        Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+        Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+        
+        // Role Permission Management Routes
+        Route::post('/roles/{role}/assign-permission', [RoleController::class, 'assignPermission'])->name('roles.assign-permission');
+        Route::delete('/roles/{role}/remove-permission', [RoleController::class, 'removePermission'])->name('roles.remove-permission');
     });
 
     // Admin only routes
